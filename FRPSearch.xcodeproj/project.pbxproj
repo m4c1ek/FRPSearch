@@ -20,6 +20,7 @@
 		D9EF48431C983B0E0081CF28 /* MovieObservables.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9EF48421C983B0D0081CF28 /* MovieObservables.swift */; };
 		D9EF48451C984AF80081CF28 /* RxCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D9EF48441C984AF80081CF28 /* RxCocoa.framework */; };
 		D9EF48471C984DCF0081CF28 /* SwiftyJSON.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D9EF48461C984DCF0081CF28 /* SwiftyJSON.framework */; };
+		D9EF48491C98AC590081CF28 /* Array+Diff.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9EF48481C98AC590081CF28 /* Array+Diff.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -38,6 +39,7 @@
 		D9EF48421C983B0D0081CF28 /* MovieObservables.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MovieObservables.swift; sourceTree = "<group>"; };
 		D9EF48441C984AF80081CF28 /* RxCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxCocoa.framework; path = Carthage/Build/iOS/RxCocoa.framework; sourceTree = "<group>"; };
 		D9EF48461C984DCF0081CF28 /* SwiftyJSON.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyJSON.framework; path = Carthage/Build/iOS/SwiftyJSON.framework; sourceTree = "<group>"; };
+		D9EF48481C98AC590081CF28 /* Array+Diff.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Array+Diff.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,11 +61,11 @@
 		D9AF64591C8879CC00BF9FDB = {
 			isa = PBXGroup;
 			children = (
-				D9EF48461C984DCF0081CF28 /* SwiftyJSON.framework */,
-				D9EF48441C984AF80081CF28 /* RxCocoa.framework */,
-				D9EF48401C983A090081CF28 /* Kingfisher.framework */,
 				D9AF64791C897A6600BF9FDB /* RxSwift.framework */,
+				D9EF48441C984AF80081CF28 /* RxCocoa.framework */,
+				D9EF48461C984DCF0081CF28 /* SwiftyJSON.framework */,
 				D9AF64771C897A6300BF9FDB /* Dwifft.framework */,
+				D9EF48401C983A090081CF28 /* Kingfisher.framework */,
 				D9AF64641C8879CC00BF9FDB /* FRPSearch */,
 				D9AF64631C8879CC00BF9FDB /* Products */,
 			);
@@ -81,16 +83,41 @@
 			isa = PBXGroup;
 			children = (
 				D9AF64651C8879CC00BF9FDB /* AppDelegate.swift */,
-				D9AF647D1C89B24D00BF9FDB /* SearchCollectionViewController.swift */,
-				D9EF483C1C9832450081CF28 /* MovieCell.swift */,
-				D9EF483E1C9832B50081CF28 /* Movie.swift */,
-				D9EF48421C983B0D0081CF28 /* MovieObservables.swift */,
-				D9AF64691C8879CC00BF9FDB /* Main.storyboard */,
+				D9B70FFF1C996DDF00B07788 /* Search */,
+				D9B70FFE1C996D9A00B07788 /* Movie Data */,
+				D9EF484A1C98B1B80081CF28 /* Utils */,
 				D9AF646C1C8879CC00BF9FDB /* Assets.xcassets */,
+				D9AF64691C8879CC00BF9FDB /* Main.storyboard */,
 				D9AF646E1C8879CC00BF9FDB /* LaunchScreen.storyboard */,
 				D9AF64711C8879CC00BF9FDB /* Info.plist */,
 			);
 			path = FRPSearch;
+			sourceTree = "<group>";
+		};
+		D9B70FFE1C996D9A00B07788 /* Movie Data */ = {
+			isa = PBXGroup;
+			children = (
+				D9EF483E1C9832B50081CF28 /* Movie.swift */,
+				D9EF48421C983B0D0081CF28 /* MovieObservables.swift */,
+			);
+			name = "Movie Data";
+			sourceTree = "<group>";
+		};
+		D9B70FFF1C996DDF00B07788 /* Search */ = {
+			isa = PBXGroup;
+			children = (
+				D9AF647D1C89B24D00BF9FDB /* SearchCollectionViewController.swift */,
+				D9EF483C1C9832450081CF28 /* MovieCell.swift */,
+			);
+			name = Search;
+			sourceTree = "<group>";
+		};
+		D9EF484A1C98B1B80081CF28 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				D9EF48481C98AC590081CF28 /* Array+Diff.swift */,
+			);
+			name = Utils;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -190,6 +217,7 @@
 				D9AF64661C8879CC00BF9FDB /* AppDelegate.swift in Sources */,
 				D9EF483F1C9832B50081CF28 /* Movie.swift in Sources */,
 				D9EF483D1C9832450081CF28 /* MovieCell.swift in Sources */,
+				D9EF48491C98AC590081CF28 /* Array+Diff.swift in Sources */,
 				D9EF48431C983B0E0081CF28 /* MovieObservables.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -2,6 +2,9 @@ import UIKit
 import Kingfisher
 
 class MovieCell: UICollectionViewCell {
+    static let cellHeight:CGFloat = 58
+    static let cellReuseIdentifier = "MovieCell"
+    
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var movieName: UILabel!
     
@@ -12,7 +15,8 @@ class MovieCell: UICollectionViewCell {
         movieName.text = movie.name
     }
     
-    func cancelImageLoading() {
+    override func prepareForReuse() {
+        super.prepareForReuse()
         imageView.kf_cancelDownloadTask()
     }
 }

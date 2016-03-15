@@ -21,22 +21,25 @@
                             <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                         </collectionViewFlowLayout>
                         <cells>
-                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="Cell" id="zD2-ux-jsb" customClass="MovieCell" customModule="FRPSearch" customModuleProvider="target">
+                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="MovieCell" id="zD2-ux-jsb" customClass="MovieCell" customModule="FRPSearch" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="64" width="181" height="58"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                     <rect key="frame" x="0.0" y="0.0" width="181" height="58"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Mlu-bi-vt5">
+                                        <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Mlu-bi-vt5">
                                             <rect key="frame" x="8" y="4" width="50" height="50"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="50" id="ESr-kz-XtA"/>
                                                 <constraint firstAttribute="height" constant="50" id="JjP-xs-F4P"/>
                                             </constraints>
                                         </imageView>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="boi-qF-gi8">
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="boi-qF-gi8">
                                             <rect key="frame" x="69" y="8" width="104" height="42"/>
+                                            <constraints>
+                                                <constraint firstAttribute="height" constant="42" id="cJY-qs-HBB"/>
+                                            </constraints>
                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                             <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                             <nil key="highlightedColor"/>
@@ -44,9 +47,12 @@
                                     </subviews>
                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 </view>
-                                <color key="backgroundColor" red="1" green="0.40000000600000002" blue="0.40000000600000002" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <constraints>
+                                    <constraint firstAttribute="trailingMargin" secondItem="boi-qF-gi8" secondAttribute="trailing" id="8PM-25-iAD"/>
                                     <constraint firstAttribute="leadingMargin" secondItem="Mlu-bi-vt5" secondAttribute="leading" id="ZmF-KK-kiL"/>
+                                    <constraint firstItem="boi-qF-gi8" firstAttribute="leading" secondItem="Mlu-bi-vt5" secondAttribute="trailing" constant="11" id="dSP-1b-Fhp"/>
+                                    <constraint firstItem="boi-qF-gi8" firstAttribute="centerY" secondItem="zD2-ux-jsb" secondAttribute="centerY" id="ejK-36-jWs"/>
                                     <constraint firstItem="Mlu-bi-vt5" firstAttribute="centerY" secondItem="zD2-ux-jsb" secondAttribute="centerY" id="xYo-29-4QQ"/>
                                 </constraints>
                                 <connections>
@@ -73,7 +79,7 @@
                 <searchBar contentMode="redraw" id="rT6-Vs-Qap">
                     <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
-                    <textInputTraits key="textInputTraits"/>
+                    <textInputTraits key="textInputTraits" returnKeyType="done"/>
                 </searchBar>
             </objects>
             <point key="canvasLocation" x="1430" y="464"/>

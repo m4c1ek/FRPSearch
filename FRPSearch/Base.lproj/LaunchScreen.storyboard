@@ -16,7 +16,20 @@
                     <view key="view" contentMode="scaleToFill" id="Ze5-6b-2t3">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="MagnifyingGlass" translatesAutoresizingMaskIntoConstraints="NO" id="Qiz-nw-tSk">
+                                <rect key="frame" x="175" y="175" width="250" height="250"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="250" id="Sor-Cd-afI"/>
+                                    <constraint firstAttribute="width" constant="250" id="XoL-nC-Jic"/>
+                                </constraints>
+                            </imageView>
+                        </subviews>
+                        <color key="backgroundColor" red="0.10980392156862745" green="0.54117647058823526" blue="0.85882352941176465" alpha="1" colorSpace="calibratedRGB"/>
+                        <constraints>
+                            <constraint firstItem="Qiz-nw-tSk" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="Z48-Y0-DpQ"/>
+                            <constraint firstItem="Qiz-nw-tSk" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="rlP-y1-mFq"/>
+                        </constraints>
                     </view>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="iYj-Kq-Ea1" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -24,4 +37,7 @@
             <point key="canvasLocation" x="53" y="375"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="MagnifyingGlass" width="341" height="341"/>
+    </resources>
 </document>

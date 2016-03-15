@@ -2,82 +2,111 @@ import UIKit
 import RxSwift
 import Dwifft
 
-private let reuseIdentifier = "Cell"
-
 class SearchCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
 
     @IBOutlet var searchBar: UISearchBar!
+    
     var movies:[Movie] = []
-    var disposable:Disposable?
+    let disposeBag = DisposeBag()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        let moviesObservable = searchBar.rx_text.throttle(0.3, scheduler: MainScheduler.instance).flatMapLatest { text in
-            return MovieObservables.network(searchText: text)
-        }.share()
-        
-        disposable = Observable.zip(moviesObservable, [Observable.just(movies), moviesObservable].concat()) { $0 }
-            .observeOn(MainScheduler.instance)
-            .subscribeNext { [weak self] (currentMovies, previousMovies) -> Void in
-            self?.movies = currentMovies
-            self?.updateMovies(currentMovies:currentMovies,previousMovies:previousMovies)
-        }
+        self.setupFetchingMovies()
     }
+    
+    private func setupFetchingMovies() {
+        let moviesObservable = searchBar.rx_text
+            .throttle(0.3, scheduler: MainScheduler.instance)
+            .flatMapLatest(moviesSearchObservable)
+            .share()
+        
+        Observable.zip(moviesObservable, [Observable.just(movies), moviesObservable].concat()) { $0 }
+            .observeOn(MainScheduler.instance)
+            .subscribeNext({ [weak self] (currentMovies, previousMovies) -> Void in
+                self?.updateMovies(currentMovies:currentMovies,previousMovies:previousMovies)
+                })
+            .addDisposableTo(disposeBag)
+    }
+    
+    private func moviesSearchObservable(text:String?) -> Observable<[Movie]> {
+        startedFetchingMovies()
+        return MovieObservables.network(searchText: text)
+            .doOn(finishedFetchingMovies)
+            .catchError({ (error) -> Observable<[Movie]> in
+                return Observable.just([])
+            })
+    }
+}
+
+
+// MARK: Side effects
+extension SearchCollectionViewController {
     
     private func updateMovies(currentMovies currentMovies:[Movie], previousMovies:[Movie]) {
-        let diff = previousMovies.diff(currentMovies)
-        let insertedIndexPaths = diff.insertions.map { insertDiff -> NSIndexPath? in
-            var indexPath:NSIndexPath?
-            if case .Insert(let i, _) = insertDiff {
-                indexPath = NSIndexPath(forItem: i, inSection: 0)
-            }
-            return indexPath
-        }.flatMap({ $0 })
-        let deletedIndexPaths = diff.deletions.map { deleteDiff -> NSIndexPath? in
-            var indexPath:NSIndexPath?
-            if case .Delete(let i, _) = deleteDiff {
-                indexPath = NSIndexPath(forItem: i, inSection: 0)
-            }
-            return indexPath
-        }.flatMap({ $0 })
-        
+        let (deletedIndexPaths, insertedIndexPaths) = currentMovies.diffIndexs(previousMovies)
         self.collectionView?.performBatchUpdates({ () -> Void in
-            if deletedIndexPaths.count > 0 {
-                self.collectionView?.deleteItemsAtIndexPaths(deletedIndexPaths)
-            }
-            if insertedIndexPaths.count > 0 {
-                self.collectionView?.insertItemsAtIndexPaths(insertedIndexPaths)
-            }
-        }, completion: nil)
+            self.collectionView?.deleteItemsAtIndexPaths(deletedIndexPaths)
+            self.collectionView?.insertItemsAtIndexPaths(insertedIndexPaths)
+            }, completion: nil)
     }
     
-    deinit {
-        disposable?.dispose()
+    private func startedFetchingMovies() {
+        NSOperationQueue.mainQueue().addOperationWithBlock({ () -> Void in
+            UIApplication.sharedApplication().networkActivityIndicatorVisible = true
+            self.collectionView?.backgroundView = nil
+        })
     }
+    
+    private func finishedFetchingMovies(event:Event<[Movie]>) {
+        switch event {
+        case .Next(let movies):
+            self.movies = movies
+            NSOperationQueue.mainQueue().addOperationWithBlock({ () -> Void in
+                UIApplication.sharedApplication().networkActivityIndicatorVisible = false
+            })
+        case .Error(let error):
+            print(error)
+            self.movies = []
+            NSOperationQueue.mainQueue().addOperationWithBlock({ () -> Void in
+                UIApplication.sharedApplication().networkActivityIndicatorVisible = false
+                let errorLabel = UILabel(frame: self.collectionView!.frame)
+                errorLabel.textAlignment = .Center
+                errorLabel.text = "An error occured"
+                self.collectionView?.backgroundView = errorLabel
+            })
+        default: ()
+        }
+    }
+}
 
+// MARK: UICollectionViewDataSource
+extension SearchCollectionViewController {
+    
     override func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
         return 1
     }
-
+    
     override func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return movies.count
     }
-
+    
     override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseIdentifier, forIndexPath: indexPath) as! MovieCell
+        let cell = collectionView.dequeueReusableCellWithReuseIdentifier(MovieCell.cellReuseIdentifier, forIndexPath: indexPath) as! MovieCell
         cell.setup(movie: movies[indexPath.row])
         return cell
     }
+}
 
-    // MARK: UICollectionViewDelegateFlowLayout
+// MARK: UICollectionViewDelegateFlowLayout
+extension SearchCollectionViewController {
+    
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
         guard let collectionViewFlowLayout = collectionViewLayout as? UICollectionViewFlowLayout else { return CGSize.zero }
         let collectionViewWidth = self.view.frame.size.width
-        if collectionViewWidth > 500 {
-            let cellWidth = (collectionViewWidth - collectionViewFlowLayout.minimumInteritemSpacing) / 2
-            return CGSize(width:cellWidth, height: 50)
-        } else {
-            return CGSize(width:collectionViewWidth, height: 50)
-        }
+        let collectionViewColumns = floor(collectionViewWidth / 500) + 1
+        let spacing = collectionViewFlowLayout.minimumInteritemSpacing * (collectionViewColumns - 1)
+        let cellWidth = (collectionViewWidth - spacing) / collectionViewColumns
+        return CGSize(width:cellWidth, height: MovieCell.cellHeight)
     }
     
     override func willAnimateRotationToInterfaceOrientation(toInterfaceOrientation: UIInterfaceOrientation, duration: NSTimeInterval) {

@@ -1,0 +1,4 @@
+github "ReactiveX/RxSwift" ~> 2.2
+github "m4c1ek/Dwifft" ~> 0.3
+github "onevcat/Kingfisher" ~> 2.1.0
+github "SwiftyJSON/SwiftyJSON" ~> 2.3

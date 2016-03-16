@@ -3,7 +3,7 @@ import RxSwift
 import Dwifft
 
 class SearchCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
-
+    
     @IBOutlet var searchBar: UISearchBar!
     
     var movies:[Movie] = []
@@ -16,7 +16,7 @@ class SearchCollectionViewController: UICollectionViewController, UICollectionVi
     
     private func setupFetchingMovies() {
         let moviesObservable = searchBar.rx_text
-            .throttle(0.3, scheduler: MainScheduler.instance)
+            .debounce(0.3, scheduler: SerialDispatchQueueScheduler(globalConcurrentQueueQOS: .UserInitiated) )
             .flatMapLatest(moviesSearchObservable)
             .share()
         
@@ -38,7 +38,6 @@ class SearchCollectionViewController: UICollectionViewController, UICollectionVi
     }
 }
 
-
 // MARK: Side effects
 extension SearchCollectionViewController {
     
@@ -51,31 +50,50 @@ extension SearchCollectionViewController {
     }
     
     private func startedFetchingMovies() {
-        NSOperationQueue.mainQueue().addOperationWithBlock({ () -> Void in
-            UIApplication.sharedApplication().networkActivityIndicatorVisible = true
-            self.collectionView?.backgroundView = nil
-        })
+        showNetworkActivity()
+        hideError()
     }
     
     private func finishedFetchingMovies(event:Event<[Movie]>) {
         switch event {
         case .Next(let movies):
             self.movies = movies
-            NSOperationQueue.mainQueue().addOperationWithBlock({ () -> Void in
-                UIApplication.sharedApplication().networkActivityIndicatorVisible = false
-            })
+            stopShowingNetworkActivity()
         case .Error(let error):
             print(error)
             self.movies = []
-            NSOperationQueue.mainQueue().addOperationWithBlock({ () -> Void in
-                UIApplication.sharedApplication().networkActivityIndicatorVisible = false
-                let errorLabel = UILabel(frame: self.collectionView!.frame)
-                errorLabel.textAlignment = .Center
-                errorLabel.text = "An error occured"
-                self.collectionView?.backgroundView = errorLabel
-            })
+            stopShowingNetworkActivity()
+            showError(error)
         default: ()
         }
+    }
+    
+    private func stopShowingNetworkActivity() {
+        NSOperationQueue.mainQueue().addOperationWithBlock({ () -> Void in
+            UIApplication.sharedApplication().networkActivityIndicatorVisible = false
+        })
+    }
+    
+    private func showNetworkActivity() {
+        NSOperationQueue.mainQueue().addOperationWithBlock({ () -> Void in
+            UIApplication.sharedApplication().networkActivityIndicatorVisible = true
+        })
+    }
+    
+    private func hideError() {
+        NSOperationQueue.mainQueue().addOperationWithBlock({ () -> Void in
+            self.collectionView?.backgroundView = nil
+        })
+    }
+    
+    private func showError(error: ErrorType) {
+        NSOperationQueue.mainQueue().addOperationWithBlock({ () -> Void in
+            UIApplication.sharedApplication().networkActivityIndicatorVisible = false
+            let errorLabel = UILabel(frame: self.collectionView!.frame)
+            errorLabel.textAlignment = .Center
+            errorLabel.text = "An error occured \(error)"
+            self.collectionView?.backgroundView = errorLabel
+        })
     }
 }
 

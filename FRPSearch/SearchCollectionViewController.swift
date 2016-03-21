@@ -11,24 +11,20 @@ class SearchCollectionViewController: UICollectionViewController, UICollectionVi
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.setupFetchingMovies()
-    }
-    
-    private func setupFetchingMovies() {
         let moviesObservable = searchBar.rx_text
-            .debounce(0.3, scheduler: SerialDispatchQueueScheduler(globalConcurrentQueueQOS: .UserInitiated) )
+            .debounce(0.3, scheduler: SerialDispatchQueueScheduler(globalConcurrentQueueQOS: .UserInitiated))
             .flatMapLatest(moviesSearchObservable)
             .share()
         
-        Observable.zip(moviesObservable, [Observable.just(movies), moviesObservable].concat()) { $0 }
-            .observeOn(MainScheduler.instance)
-            .subscribeNext({ [weak self] (currentMovies, previousMovies) -> Void in
-                self?.updateMovies(currentMovies:currentMovies,previousMovies:previousMovies)
-                })
-            .addDisposableTo(disposeBag)
+        Observable.zip(moviesObservable, moviesObservable.startWith(movies)) { $0 }
+        .observeOn(MainScheduler.instance)
+        .subscribeNext { [weak self] (currentMovies, previousMovies) -> Void in
+            self?.updateMovies(currentMovies: currentMovies, previousMovies: previousMovies)
+        }
+        .addDisposableTo(disposeBag)
     }
     
-    private func moviesSearchObservable(text:String?) -> Observable<[Movie]> {
+    private func moviesSearchObservable(text: String?) -> Observable<[Movie]> {
         startedFetchingMovies()
         return MovieObservables.network(searchText: text)
             .doOn(finishedFetchingMovies)
@@ -36,6 +32,7 @@ class SearchCollectionViewController: UICollectionViewController, UICollectionVi
                 return Observable.just([])
             })
     }
+    
 }
 
 // MARK: Side effects
@@ -91,7 +88,7 @@ extension SearchCollectionViewController {
             UIApplication.sharedApplication().networkActivityIndicatorVisible = false
             let errorLabel = UILabel(frame: self.collectionView!.frame)
             errorLabel.textAlignment = .Center
-            errorLabel.text = "An error occured \(error)"
+            errorLabel.text = "Oh no...."
             self.collectionView?.backgroundView = errorLabel
         })
     }
